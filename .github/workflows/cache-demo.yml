@@ -1,0 +1,43 @@
+name: Cache Demo
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  cache-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache
+            node_modules
+          key: cache-9cc6d70-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            cache-9cc6d70-${{ runner.os }}-
+      
+      - name: prime-cache-9cc6d70
+        run: |
+          if [ "${{ steps.cache.outputs.cache-hit }}" == "true" ]; then
+            echo "Cache HIT for cache-9cc6d70"
+          else
+            echo "Cache MISS for cache-9cc6d70"
+          fi
+      
+      - name: Install dependencies (if cache miss)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Installing dependencies..."
+          mkdir -p ~/.cache
+          echo "dependency-data" > ~/.cache/test.txt
+      
+      - name: Verify cache
+        run: echo "Workflow completed with cache key cache-9cc6d70"

@@ -1,0 +1,16 @@
+name: Email Verification
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 24f3004348@ds.study.iitm.ac.in
+        run: echo "Email verification step"
+      
+      - name: Complete
+        run: echo "Workflow completed!"
